@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loukis AI Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            padding: 24px 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            padding: 0 24px 32px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .brand h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .team-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .create-btn {
+            margin: 24px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .create-btn:hover {
+            background: #b91c1c;
+            transform: translateY(-1px);
+        }
+
+        .nav-section {
+            padding: 0 24px;
+            margin-bottom: 32px;
+        }
+
+        .nav-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            color: #475569;
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 2px;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .nav-item.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .project-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            border-radius: 6px;
+            color: #0f172a;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+        }
+
+        .project-selector:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .dropdown-arrow {
+            margin-left: auto;
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            padding: 32px;
+        }
+
+        .header {
+            margin-bottom: 32px;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 24px;
+        }
+
+        /* Meetings Interface */
+        .meetings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 32px;
+        }
+
+        .schedule-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .schedule-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .meetings-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .meetings-table-container {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .table-filter {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .filter-btn {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+        }
+
+        .filter-btn.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .meetings-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .meetings-table th {
+            background: #f8fafc;
+            padding: 16px 24px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .meetings-table td {
+            padding: 16px 24px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+        }
+
+        .meetings-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .meeting-title {
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+
+        .meeting-participants {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .meeting-date {
+            color: #0f172a;
+            font-weight: 500;
+        }
+
+        .meeting-time {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 2px;
+        }
+
+        .meeting-duration {
+            color: #0f172a;
+            font-weight: 500;
+        }
+
+        .meeting-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-completed {
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .status-recent {
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .view-details-btn {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #475569;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-details-btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            color: #334155;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #64748b;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .modal-content {
+            padding: 24px;
+            overflow-y: auto;
+            max-height: 60vh;
+        }
+
+        .meeting-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .info-item {
+            font-size: 13px;
+        }
+
+        .info-label {
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            color: #0f172a;
+            font-weight: 500;
+        }
+
+        .transcript-section {
+            margin-top: 24px;
+        }
+
+        .transcript-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 16px;
+        }
+
+        .transcript-content {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #374151;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="brand">
+                <h1>Loukis AI</h1>
+                <div class="team-selector">
+                    <span>👨‍💻</span>
+                    <span>Software Team</span>
+                    <span>▼</span>
+                </div>
+            </div>
+
+            <button class="create-btn">Create New Project</button>
+
+            <div class="nav-section">
+                <div class="project-selector">
+                    <span class="nav-icon">📁</span>
+                    <span>Projet Multi-plateau</span>
+                    <span class="dropdown-arrow">▼</span>
+                </div>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Tableau de Bord</span>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Navigation</div>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">⚡</span>
+                    <span>Decisions</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">📅</span>
+                    <span>Key Dates</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">🚨</span>
+                    <span>Alerts</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">💡</span>
+                    <span>Suggested Actions</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">📈</span>
+                    <span>Daily Reports</span>
+                </a>
+                <a href="#" class="nav-item active">
+                    <span class="nav-icon">👥</span>
+                    <span>Meetings</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">🏢</span>
+                    <span>My Team</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">🤖</span>
+                    <span>Agents (soon)</span>
+                </a>
+            </div>
+
+            <div class="nav-section" style="margin-top: auto;">
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">🔗</span>
+                    <span>Connectors</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">👤</span>
+                    <span>My Account</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Settings</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main">
+            <div class="header">
+                <div class="breadcrumb">Projet Multi-plateau / Meetings</div>
+                <h1 class="page-title">Meetings</h1>
+            </div>
+
+            <div class="meetings-header">
+                <div></div>
+                <button class="schedule-btn">Schedule Meeting</button>
+            </div>
+
+            <div class="meetings-stats">
+                <div class="stat-card">
+                    <div class="stat-value">12</div>
+                    <div class="stat-label">Total Meetings (30 days)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">8.5h</div>
+                    <div class="stat-label">Total Duration</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">42min</div>
+                    <div class="stat-label">Average Duration</div>
+                </div>
+            </div>
+
+            <div class="meetings-table-container">
+                <div class="table-header">
+                    <h2 class="table-title">Recent Meetings</h2>
+                    <div class="table-filter">
+                        <button class="filter-btn active">All</button>
+                        <button class="filter-btn">This Week</button>
+                        <button class="filter-btn">Completed</button>
+                    </div>
+                </div>
+
+                <table class="meetings-table">
+                    <thead>
+                        <tr>
+                            <th>Meeting</th>
+                            <th>Date & Time</th>
+                            <th>Duration</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="meeting-title">Sprint Planning Q3</div>
+                                <div class="meeting-participants">5 participants</div>
+                            </td>
+                            <td>
+                                <div class="meeting-date">July 18, 2025</div>
+                                <div class="meeting-time">10:00 AM</div>
+                            </td>
+                            <td>
+                                <div class="meeting-duration">1h 30min</div>
+                            </td>
+                            <td>
+                                <span class="meeting-status status-recent">Recent</span>
+                            </td>
+                            <td>
+                                <button class="view-details-btn" onclick="openModal('sprint-planning')">View Details</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="meeting-title">Architecture Review</div>
+                                <div class="meeting-participants">3 participants</div>
+                            </td>
+                            <td>
+                                <div class="meeting-date">July 17, 2025</div>
+                                <div class="meeting-time">2:30 PM</div>
+                            </td>
+                            <td>
+                                <div class="meeting-duration">45min</div>
+                            </td>
+                            <td>
+                                <span class="meeting-status status-recent">Recent</span>
+                            </td>
+                            <td>
+                                <button class="view-details-btn" onclick="openModal('architecture-review')">View Details</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="meeting-title">Product Strategy Sync</div>
+                                <div class="meeting-participants">8 participants</div>
+                            </td>
+                            <td>
+                                <div class="meeting-date">July 15, 2025</div>
+                                <div class="meeting-time">9:00 AM</div>
+                            </td>
+                            <td>
+                                <div class="meeting-duration">2h 15min</div>
+                            </td>
+                            <td>
+                                <span class="meeting-status status-completed">Completed</span>
+                            </td>
+                            <td>
+                                <button class="view-details-btn" onclick="openModal('product-strategy')">View Details</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="meeting-title">Weekly Standup</div>
+                                <div class="meeting-participants">6 participants</div>
+                            </td>
+                            <td>
+                                <div class="meeting-date">July 14, 2025</div>
+                                <div class="meeting-time">11:00 AM</div>
+                            </td>
+                            <td>
+                                <div class="meeting-duration">25min</div>
+                            </td>
+                            <td>
+                                <span class="meeting-status status-completed">Completed</span>
+                            </td>
+                            <td>
+                                <button class="view-details-btn" onclick="openModal('weekly-standup')">View Details</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="meeting-title">Client Requirements Review</div>
+                                <div class="meeting-participants">4 participants</div>
+                            </td>
+                            <td>
+                                <div class="meeting-date">July 12, 2025</div>
+                                <div class="meeting-time">3:00 PM</div>
+                            </td>
+                            <td>
+                                <div class="meeting-duration">1h 15min</div>
+                            </td>
+                            <td>
+                                <span class="meeting-status status-completed">Completed</span>
+                            </td>
+                            <td>
+                                <button class="view-details-btn" onclick="openModal('client-requirements')">View Details</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Meeting Details</h3>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-content">
+                <div class="meeting-info" id="meetingInfo">
+                    <!-- Meeting info will be populated here -->
+                </div>
+                <div class="transcript-section">
+                    <h4 class="transcript-title">Meeting Transcript</h4>
+                    <div class="transcript-content" id="transcriptContent">
+                        <!-- Transcript will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const meetings = {
+            'sprint-planning': {
+                title: 'Sprint Planning Q3',
+                date: 'July 18, 2025',
+                time: '10:00 AM',
+                duration: '1h 30min',
+                participants: 'John Smith, Sarah Wilson, Mike Chen, Lisa Brown, Alex Johnson',
+                transcript: `John Smith: Good morning everyone. Let's start our Q3 sprint planning session. We have several key features to prioritize today.
+
+Sarah Wilson: Thanks John. I've prepared the backlog review. We have 23 user stories ready for estimation.
+
+Mike Chen: From a technical perspective, we need to address the database optimization tasks first. They're blocking some of the new features.
+
+Lisa Brown: Agreed. The performance issues from last sprint need to be resolved before we add more complexity.
+
+Alex Johnson: I can take the lead on the API redesign. It should improve our response times significantly.
+
+John Smith: Perfect. Let's allocate the first week to technical debt, then move to new features. Sarah, can you walk us through the priority stories?`
+            },
+            'architecture-review': {
+                title: 'Architecture Review',
+                date: 'July 17, 2025',
+                time: '2:30 PM',
+                duration: '45min',
+                participants: 'Mike Chen, Alex Johnson, David Park',
+                transcript: `Mike Chen: Let's review the proposed microservices architecture for the new platform.
+
+Alex Johnson: I've prepared the system diagram. We're proposing to split the monolith into 5 core services.
+
+David Park: The separation looks clean. How are we handling inter-service communication?
+
+Mike Chen: We'll use REST APIs with event-driven messaging for async operations.`
+            },
+            'product-strategy': {
+                title: 'Product Strategy Sync',
+                date: 'July 15, 2025',
+                time: '9:00 AM',
+                duration: '2h 15min',
+                participants: 'Emma Davis, John Smith, Sarah Wilson, Mike Chen, Lisa Brown, Alex Johnson, Tom Garcia, Nina Rodriguez',
+                transcript: `Emma Davis: Welcome everyone to our quarterly product strategy session. We need to align on our roadmap for Q4.
+
+John Smith: The engineering team has completed 85% of our Q3 commitments. We're on track for the major release.
+
+Sarah Wilson: From a product perspective, user feedback has been overwhelmingly positive on the new dashboard features.`
+            },
+            'weekly-standup': {
+                title: 'Weekly Standup',
+                date: 'July 14, 2025',
+                time: '11:00 AM',
+                duration: '25min',
+                participants: 'John Smith, Sarah Wilson, Mike Chen, Lisa Brown, Alex Johnson, David Park',
+                transcript: `John Smith: Good morning team. Let's do our weekly standup. Sarah, would you like to start?
+
+Sarah Wilson: Sure. Last week I completed the user research analysis and started on the wireframes for the new feature set.
+
+Mike Chen: I finished the database optimization and it's showing 40% performance improvement. Now working on the API endpoints.`
+            },
+            'client-requirements': {
+                title: 'Client Requirements Review',
+                date: 'July 12, 2025',
+                time: '3:00 PM',
+                duration: '1h 15min',
+                participants: 'Emma Davis, John Smith, Sarah Wilson, Client: Robert Martinez',
+                transcript: `Emma Davis: Thank you for joining us, Robert. Let's review the requirements for your custom integration.
+
+Robert Martinez: Thank you Emma. We need the system to handle our specific workflow for inventory management.
+
+Sarah Wilson: I've documented the current process. The main challenge is the real-time synchronization with your legacy system.`
+            }
+        };
+
+        function openModal(meetingId) {
+            console.log('Opening modal for:', meetingId);
+            const meeting = meetings[meetingId];
+            if (!meeting) {
+                console.error('Meeting not found:', meetingId);
+                return;
+            }
+
+            document.getElementById('modalTitle').textContent = meeting.title;
+            
+            document.getElementById('meetingInfo').innerHTML = `
+                <div class="info-item">
+                    <div class="info-label">Date & Time</div>
+                    <div class="info-value">${meeting.date} at ${meeting.time}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Duration</div>
+                    <div class="info-value">${meeting.duration}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Participants</div>
+                    <div class="info-value">${meeting.participants}</div>
+                </div>
+            `;
+
+            document.getElementById('transcriptContent').textContent = meeting.transcript;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            console.log('Closing modal');
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Test the modal functionality on page load
+        console.log('Script loaded, modal functions available');
+    </script>
+</body>
+</html>
